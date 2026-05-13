@@ -1,2 +1,2 @@
 # ToDo-
-ToDo-Liste mit mit Dshboard und verntwortlichen
+ToDo-Liste mit mit Dshboard und Verantwortlichen
