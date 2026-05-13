@@ -1,0 +1,375 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);font-size:14px;color:var(--color-text-primary)}
+.app{max-width:680px;margin:0 auto;padding:1.25rem 1rem 3rem}
+.app-header{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:1.25rem}
+.app-header h1{font-size:22px;font-weight:500}
+.app-header .today{font-size:12px;color:var(--color-text-secondary)}
+.tabs{display:flex;gap:2px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:3px;margin-bottom:1.25rem;width:fit-content}
+.tab{border:none;background:none;font-family:var(--font-sans);font-size:13px;padding:5px 16px;border-radius:6px;cursor:pointer;color:var(--color-text-secondary);transition:all .15s;display:flex;align-items:center;gap:5px}
+.tab.active{background:var(--color-background-primary);color:var(--color-text-primary);border:0.5px solid var(--color-border-tertiary)}
+
+/* DASHBOARD */
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1rem}
+.metric{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:12px 14px}
+.metric .m-label{font-size:11px;color:var(--color-text-secondary);margin-bottom:4px}
+.metric .m-val{font-size:22px;font-weight:500}
+.metric.m-red .m-val{color:#A32D2D}
+.metric.m-amber .m-val{color:#854F0B}
+.metric.m-green .m-val{color:#3B6D11}
+.dash-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.dash-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px}
+.dash-card h3{font-size:13px;font-weight:500;margin-bottom:10px;color:var(--color-text-secondary)}
+.progress-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.progress-row .pr-label{font-size:12px;min-width:110px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--color-text-primary)}
+.progress-bar-wrap{flex:1;height:6px;background:var(--color-background-secondary);border-radius:99px;overflow:hidden}
+.progress-bar{height:100%;border-radius:99px;background:var(--color-text-primary);transition:width .4s}
+.progress-bar.red{background:#E24B4A}
+.progress-bar.amber{background:#BA7517}
+.progress-bar.green{background:#639922}
+.pr-pct{font-size:11px;color:var(--color-text-secondary);min-width:28px;text-align:right}
+.activity-item{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px}
+.activity-item:last-child{border-bottom:none}
+.act-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.act-dot.red{background:#E24B4A}
+.act-dot.amber{background:#BA7517}
+.act-dot.green{background:#639922}
+.act-dot.gray{background:var(--color-text-tertiary)}
+.act-text{flex:1;color:var(--color-text-primary)}
+.act-sub{color:var(--color-text-secondary);font-size:11px}
+.donut-wrap{display:flex;align-items:center;gap:16px}
+.donut-legend{display:flex;flex-direction:column;gap:6px}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:12px}
+.legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.full-dash-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px;margin-bottom:8px}
+
+/* TASKS */
+.form-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px;margin-bottom:1rem}
+.form-row{display:grid;gap:8px;margin-bottom:8px}
+.form-row.r1{grid-template-columns:1fr auto}
+.form-row.r2{grid-template-columns:1fr 1fr auto}
+.form-row.r3{grid-template-columns:1fr 1fr}
+label.fl{font-size:11px;color:var(--color-text-secondary);display:block;margin-bottom:3px}
+input.fi{width:100%;height:36px;padding:0 10px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);font-size:13px;font-family:var(--font-sans);outline:none}
+input.fi:focus{border-color:var(--color-border-primary)}
+.add-btn{height:36px;padding:0 14px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-text-primary);color:var(--color-background-primary);font-size:13px;font-weight:500;font-family:var(--font-sans);cursor:pointer;display:flex;align-items:center;gap:5px;white-space:nowrap;align-self:flex-end}
+.add-btn:hover{opacity:.82}
+.add-btn:active{transform:scale(.98)}
+.notif-bar{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);flex-wrap:wrap}
+.notif-bar label{font-size:12px;color:var(--color-text-secondary)}
+.notif-bar input{height:32px;flex:1;min-width:160px;padding:0 10px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);font-size:13px;font-family:var(--font-sans);outline:none}
+.notif-bar input:focus{border-color:var(--color-border-primary)}
+.ntag{font-size:11px;padding:2px 8px;border-radius:99px;white-space:nowrap}
+.ntag.on{background:#EAF3DE;color:#27500A}
+.ntag.off{background:var(--color-background-secondary);color:var(--color-text-tertiary);border:0.5px solid var(--color-border-tertiary)}
+.filter-row{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:.75rem}
+.fb{border:0.5px solid var(--color-border-tertiary);border-radius:99px;background:transparent;color:var(--color-text-secondary);font-size:12px;font-family:var(--font-sans);padding:4px 11px;cursor:pointer;transition:all .12s}
+.fb.active{background:var(--color-text-primary);color:var(--color-background-primary);border-color:var(--color-text-primary)}
+.todo-list{display:flex;flex-direction:column;gap:7px}
+.todo-item{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:11px 13px;transition:border-color .15s}
+.todo-item:hover{border-color:var(--color-border-secondary)}
+.todo-item.done{opacity:.5}
+.todo-item.overdue:not(.done){border-left:2px solid #E24B4A}
+.todo-item.due-today:not(.done){border-left:2px solid #BA7517}
+.item-row1{display:flex;align-items:flex-start;gap:9px}
+.checkbox{width:16px;height:16px;border:0.5px solid var(--color-border-primary);border-radius:4px;cursor:pointer;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.checkbox.checked{background:var(--color-text-primary);border-color:var(--color-text-primary)}
+.checkbox.checked::after{content:'';width:4px;height:7px;border:1.5px solid var(--color-background-primary);border-top:none;border-left:none;transform:rotate(42deg) translateY(-1px)}
+.item-body{flex:1;min-width:0}
+.item-text{font-size:14px;line-height:1.35}
+.done .item-text{text-decoration:line-through;color:var(--color-text-tertiary)}
+.item-meta{display:flex;align-items:center;gap:6px;margin-top:5px;flex-wrap:wrap}
+.badge{display:inline-flex;align-items:center;gap:3px;font-size:11px;padding:2px 7px;border-radius:99px;font-weight:500;white-space:nowrap}
+.b-red{background:#FCEBEB;color:#A32D2D}
+.b-amber{background:#FAEEDA;color:#854F0B}
+.b-green{background:#EAF3DE;color:#3B6D11}
+.b-gray{background:var(--color-background-secondary);color:var(--color-text-secondary)}
+.b-blue{background:#E6F1FB;color:#185FA5}
+.avatar{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;font-size:9px;font-weight:500;background:#E6F1FB;color:#185FA5;flex-shrink:0}
+.item-actions{display:flex;gap:3px;flex-shrink:0}
+.ib{border:none;background:none;cursor:pointer;font-size:15px;padding:3px 4px;border-radius:4px;color:var(--color-text-tertiary);line-height:1;transition:color .12s}
+.ib:hover{color:var(--color-text-primary)}
+.ib.imail:hover{color:#185FA5}
+.ib.idel:hover{color:#A32D2D}
+.empty{text-align:center;padding:2.5rem 0;color:var(--color-text-tertiary);font-size:13px}
+.count{font-size:12px;color:var(--color-text-secondary);margin-top:.6rem;text-align:right}
+.banner{display:none;align-items:center;gap:8px;padding:8px 12px;background:#FCEBEB;border:0.5px solid #F09595;border-radius:var(--border-radius-md);margin-bottom:.75rem;font-size:13px;color:#A32D2D}
+.banner.show{display:flex}
+.banner-link{margin-left:auto;font-size:12px;text-decoration:underline;cursor:pointer;color:#A32D2D;background:none;border:none;font-family:var(--font-sans)}
+.toast{position:fixed;bottom:1.25rem;right:1.25rem;background:var(--color-text-primary);color:var(--color-background-primary);padding:9px 15px;border-radius:var(--border-radius-lg);font-size:13px;opacity:0;transform:translateY(6px);transition:all .3s;pointer-events:none;z-index:999;max-width:260px}
+.toast.show{opacity:1;transform:translateY(0)}
+</style>
+
+<h2 class="sr-only">Aufgabenverwaltung mit Dashboard, Verantwortlichen und Fälligkeitsdaten</h2>
+<div class="app">
+  <div class="app-header">
+    <h1>Aufgabenverwaltung</h1>
+    <span class="today" id="today-lbl"></span>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="dashboard"><i class="ti ti-layout-dashboard" aria-hidden="true"></i> Dashboard</button>
+    <button class="tab" data-tab="tasks"><i class="ti ti-checklist" aria-hidden="true"></i> Aufgaben</button>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="view-dashboard">
+    <div class="metrics" id="metrics"></div>
+    <div class="dash-row">
+      <div class="dash-card" id="donut-card">
+        <h3>Status-Übersicht</h3>
+        <div class="donut-wrap">
+          <canvas id="donut" width="90" height="90"></canvas>
+          <div class="donut-legend" id="donut-legend"></div>
+        </div>
+      </div>
+      <div class="dash-card">
+        <h3>Verantwortliche (Auslastung)</h3>
+        <div id="person-bars"></div>
+      </div>
+    </div>
+    <div class="full-dash-card">
+      <h3>Überfällige & heute fällige Aufgaben</h3>
+      <div id="activity-list"></div>
+    </div>
+  </div>
+
+  <!-- TASKS -->
+  <div id="view-tasks" style="display:none">
+    <div class="form-card">
+      <div class="form-row r1">
+        <div><label class="fl">Aufgabe</label><input class="fi" type="text" id="t-text" placeholder="Neue Aufgabe …" maxlength="120"/></div>
+        <div style="display:flex;align-items:flex-end"><button class="add-btn" id="add-btn"><i class="ti ti-plus" aria-hidden="true"></i> Hinzufügen</button></div>
+      </div>
+      <div class="form-row r3">
+        <div><label class="fl"><i class="ti ti-calendar" aria-hidden="true"></i> Fällig bis</label><input class="fi" type="date" id="t-due"/></div>
+        <div><label class="fl"><i class="ti ti-user" aria-hidden="true"></i> Verantwortliche/r</label><input class="fi" type="text" id="t-person" placeholder="Name …" maxlength="40"/></div>
+      </div>
+      <div class="form-row r1" style="margin-bottom:0">
+        <div><label class="fl"><i class="ti ti-mail" aria-hidden="true"></i> E-Mail Verantwortliche/r</label><input class="fi" type="email" id="t-email" placeholder="person@firma.de"/></div>
+      </div>
+      <div style="margin-top:10px">
+        <div class="notif-bar">
+          <i class="ti ti-bell" aria-hidden="true" style="font-size:15px;color:var(--color-text-secondary);flex-shrink:0"></i>
+          <label for="my-email">Meine E-Mail (für Benachrichtigungen):</label>
+          <input type="email" id="my-email" placeholder="meine@email.de"/>
+          <span class="ntag off" id="ntag">Aus</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="banner" id="banner">
+      <i class="ti ti-alert-triangle" aria-hidden="true"></i>
+      <span id="banner-msg"></span>
+      <button class="banner-link" id="send-all-btn">Alle melden</button>
+    </div>
+
+    <div class="filter-row">
+      <button class="fb active" data-f="alle">Alle</button>
+      <button class="fb" data-f="offen">Offen</button>
+      <button class="fb" data-f="erledigt">Erledigt</button>
+      <button class="fb" data-f="überfällig">Überfällig</button>
+    </div>
+    <div class="todo-list" id="list"></div>
+    <p class="count" id="count-line"></p>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const TODAY=new Date();TODAY.setHours(0,0,0,0);
+const FMT=d=>new Date(d+'T00:00:00').toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric'});
+const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+let tasks=JSON.parse(localStorage.getItem('avm_tasks')||'null')||[
+  {id:1,text:'Angebot an Kunde Müller erstellen',done:false,due:new Date(Date.now()-86400000*1).toISOString().slice(0,10),person:'Anna Schmidt',pemail:'anna@firma.de'},
+  {id:2,text:'Quartalsbericht abschließen',done:false,due:new Date(Date.now()-86400000*3).toISOString().slice(0,10),person:'Thomas Bauer',pemail:'t.bauer@firma.de'},
+  {id:3,text:'Server-Update einplanen',done:true,due:new Date(Date.now()-86400000*5).toISOString().slice(0,10),person:'Anna Schmidt',pemail:'anna@firma.de'},
+  {id:4,text:'Team-Meeting vorbereiten',done:false,due:new Date().toISOString().slice(0,10),person:'Thomas Bauer',pemail:'t.bauer@firma.de'},
+  {id:5,text:'Datenschutz-Richtlinie prüfen',done:false,due:new Date(Date.now()+86400000*4).toISOString().slice(0,10),person:'Maria Hofmann',pemail:'m.hofmann@firma.de'},
+  {id:6,text:'Onboarding-Unterlagen',done:true,due:new Date(Date.now()+86400000*2).toISOString().slice(0,10),person:'Maria Hofmann',pemail:'m.hofmann@firma.de'}
+];
+let myEmail=localStorage.getItem('my_email')||'';
+let filter='alle';
+const save=()=>{localStorage.setItem('avm_tasks',JSON.stringify(tasks));localStorage.setItem('my_email',myEmail)};
+
+document.getElementById('today-lbl').textContent=TODAY.toLocaleDateString('de-DE',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+
+function dayStatus(due){
+  if(!due)return null;
+  const d=new Date(due+'T00:00:00');d.setHours(0,0,0,0);
+  if(d<TODAY)return'overdue';
+  if(d.getTime()===TODAY.getTime())return'today';
+  const diff=(d-TODAY)/86400000;
+  return diff<=3?'soon':'normal';
+}
+
+function initials(name){if(!name)return'?';const p=name.trim().split(' ');return(p[0][0]+(p[1]?p[1][0]:'')).toUpperCase()}
+
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3200)}
+
+function sendEmail(list,single){
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(myEmail)){showToast('⚠ Bitte zuerst meine E-Mail eintragen.');return;}
+  const subj=encodeURIComponent(`Aufgaben-Erinnerung – ${TODAY.toLocaleDateString('de-DE')}`);
+  const body=encodeURIComponent('Hallo,\n\nfolgende Aufgaben benötigen Aufmerksamkeit:\n\n'+
+    list.map(t=>`• ${t.text}  |  Fällig: ${t.due?FMT(t.due):'–'}  |  Verantwortlich: ${t.person||'–'}  (${t.pemail||'–'})`).join('\n')+
+    '\n\nBitte prüfe den Bearbeitungsstand.\n\nDeine Aufgabenverwaltung');
+  const to=encodeURIComponent(single&&single.pemail&&single.pemail!==myEmail?myEmail+','+single.pemail:myEmail);
+  window.open(`mailto:${to}?subject=${subj}&body=${body}`,'_self');
+  showToast('E-Mail-Client wird geöffnet …');
+}
+
+/* ---- DASHBOARD ---- */
+function renderDashboard(){
+  const total=tasks.length,done=tasks.filter(t=>t.done).length,
+    open=tasks.filter(t=>!t.done).length,
+    overdue=tasks.filter(t=>!t.done&&dayStatus(t.due)==='overdue').length,
+    dueToday=tasks.filter(t=>!t.done&&dayStatus(t.due)==='today').length;
+
+  document.getElementById('metrics').innerHTML=`
+    <div class="metric"><div class="m-label">Gesamt</div><div class="m-val">${total}</div></div>
+    <div class="metric m-green"><div class="m-label">Erledigt</div><div class="m-val">${done}</div></div>
+    <div class="metric m-amber"><div class="m-label">Offen</div><div class="m-val">${open}</div></div>
+    <div class="metric m-red"><div class="m-label">Überfällig</div><div class="m-val">${overdue}</div></div>`;
+
+  // Donut
+  const canvas=document.getElementById('donut');
+  const ctx=canvas.getContext('2d');
+  ctx.clearRect(0,0,90,90);
+  const data=[
+    {val:done,color:'#639922',label:`Erledigt (${done})`},
+    {val:dueToday,color:'#BA7517',label:`Heute fällig (${dueToday})`},
+    {val:overdue,color:'#E24B4A',label:`Überfällig (${overdue})`},
+    {val:open-overdue-dueToday,color:'#B4B2A9',label:`Offen (${open-overdue-dueToday})`}
+  ].filter(d=>d.val>0);
+  const tot=data.reduce((a,b)=>a+b.val,0)||1;
+  let start=-Math.PI/2;
+  data.forEach(d=>{
+    const angle=(d.val/tot)*Math.PI*2;
+    ctx.beginPath();ctx.moveTo(45,45);ctx.arc(45,45,42,start,start+angle);ctx.closePath();
+    ctx.fillStyle=d.color;ctx.fill();
+    start+=angle;
+  });
+  ctx.beginPath();ctx.arc(45,45,22,0,Math.PI*2);ctx.fillStyle='var(--color-background-primary)';ctx.fill();
+  const pct=total?Math.round((done/total)*100):0;
+  ctx.fillStyle='var(--color-text-primary)';ctx.font='500 13px var(--font-sans)';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText(pct+'%',45,45);
+  document.getElementById('donut-legend').innerHTML=data.map(d=>`<div class="legend-item"><div class="legend-dot" style="background:${d.color}"></div><span style="font-size:12px;color:var(--color-text-secondary)">${d.label}</span></div>`).join('');
+
+  // Person bars
+  const persons={};
+  tasks.forEach(t=>{const k=t.person||'Unbekannt';if(!persons[k])persons[k]={total:0,done:0,overdue:0};persons[k].total++;if(t.done)persons[k].done++;if(!t.done&&dayStatus(t.due)==='overdue')persons[k].overdue++;});
+  const maxT=Math.max(...Object.values(persons).map(p=>p.total),1);
+  document.getElementById('person-bars').innerHTML=Object.entries(persons).map(([name,p])=>{
+    const pct=Math.round((p.total/maxT)*100);
+    const cls=p.overdue>0?'red':p.done===p.total?'green':'';
+    return`<div class="progress-row">
+      <span class="pr-label" title="${esc(name)}">${esc(name)}</span>
+      <div class="progress-bar-wrap"><div class="progress-bar ${cls}" style="width:${pct}%"></div></div>
+      <span class="pr-pct">${p.total}</span>
+    </div>`;
+  }).join('')||'<p style="font-size:12px;color:var(--color-text-tertiary)">Keine Daten</p>';
+
+  // Activity
+  const urgent=tasks.filter(t=>!t.done&&(dayStatus(t.due)==='overdue'||dayStatus(t.due)==='today')).sort((a,b)=>a.due>b.due?1:-1);
+  document.getElementById('activity-list').innerHTML=urgent.length?urgent.map(t=>{
+    const s=dayStatus(t.due);
+    const dot=s==='overdue'?'red':'amber';
+    const label=s==='overdue'?`Überfällig seit ${FMT(t.due)}`:`Heute fällig`;
+    return`<div class="activity-item">
+      <div class="act-dot ${dot}"></div>
+      <div style="flex:1;min-width:0">
+        <div class="act-text" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(t.text)}</div>
+        <div class="act-sub">${label}${t.person?' · '+esc(t.person):''}</div>
+      </div>
+      <button class="ib imail" aria-label="Melden" onclick="sendEmail([tasks.find(x=>x.id==${t.id})],tasks.find(x=>x.id==${t.id}))"><i class="ti ti-mail" aria-hidden="true"></i></button>
+    </div>`;
+  }).join(''):`<p style="font-size:12px;color:var(--color-text-tertiary);padding:8px 0">Keine dringenden Aufgaben 🎉</p>`;
+}
+
+/* ---- TASKS ---- */
+function renderTasks(){
+  const overdue=tasks.filter(t=>!t.done&&dayStatus(t.due)==='overdue');
+  const banner=document.getElementById('banner');
+  if(overdue.length){banner.classList.add('show');document.getElementById('banner-msg').textContent=`${overdue.length} Aufgabe${overdue.length>1?'n':''} überfällig!`;}
+  else banner.classList.remove('show');
+
+  const visible=tasks.filter(t=>filter==='offen'?!t.done:filter==='erledigt'?t.done:filter==='überfällig'?!t.done&&dayStatus(t.due)==='overdue':true);
+  const list=document.getElementById('list');
+  if(!visible.length){list.innerHTML=`<p class="empty">Keine Aufgaben${filter!=='alle'?' in dieser Kategorie':''} vorhanden.</p>`;return;}
+
+  list.innerHTML=visible.map(t=>{
+    const s=dayStatus(t.due);
+    let cls='todo-item'+(t.done?' done':'')+(s==='overdue'&&!t.done?' overdue':s==='today'&&!t.done?' due-today':'');
+    const dueBadge=t.due&&!t.done?
+      s==='overdue'?`<span class="badge b-red"><i class="ti ti-alert-triangle" style="font-size:10px" aria-hidden="true"></i>${FMT(t.due)}</span>`:
+      s==='today'?`<span class="badge b-amber"><i class="ti ti-clock" style="font-size:10px" aria-hidden="true"></i>Heute</span>`:
+      s==='soon'?`<span class="badge b-green"><i class="ti ti-calendar" style="font-size:10px" aria-hidden="true"></i>${FMT(t.due)}</span>`:
+      `<span class="badge b-gray"><i class="ti ti-calendar" style="font-size:10px" aria-hidden="true"></i>${FMT(t.due)}</span>`:'';
+    const personBadge=t.person?`<span class="badge b-blue"><span class="avatar">${initials(t.person)}</span>${esc(t.person)}</span>`:'';
+    return`<div class="${cls}" data-id="${t.id}">
+      <div class="item-row1">
+        <div class="checkbox${t.done?' checked':''}" role="checkbox" aria-checked="${t.done}" tabindex="0" data-toggle="${t.id}"></div>
+        <div class="item-body">
+          <div class="item-text">${esc(t.text)}</div>
+          <div class="item-meta">${dueBadge}${personBadge}</div>
+        </div>
+        <div class="item-actions">
+          <button class="ib imail" aria-label="Per E-Mail melden" data-mail="${t.id}"><i class="ti ti-mail" aria-hidden="true"></i></button>
+          <button class="ib idel" aria-label="Löschen" data-del="${t.id}"><i class="ti ti-trash" aria-hidden="true"></i></button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  const done=tasks.filter(t=>t.done).length;
+  document.getElementById('count-line').textContent=`${done} von ${tasks.length} erledigt`;
+}
+
+function renderAll(){renderDashboard();renderTasks();}
+
+/* ---- EVENTS ---- */
+const myEmailEl=document.getElementById('my-email');
+myEmailEl.value=myEmail;
+function updateNtag(){const v=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(myEmail);const el=document.getElementById('ntag');el.textContent=v?'Aktiv':'Aus';el.className='ntag '+(v?'on':'off');}
+myEmailEl.addEventListener('input',()=>{myEmail=myEmailEl.value.trim();save();updateNtag();});
+updateNtag();
+
+document.getElementById('add-btn').onclick=()=>{
+  const txt=document.getElementById('t-text').value.trim();
+  if(!txt)return;
+  const due=document.getElementById('t-due').value;
+  const person=document.getElementById('t-person').value.trim();
+  const pemail=document.getElementById('t-email').value.trim();
+  tasks.unshift({id:Date.now(),text:txt,done:false,due,person,pemail});
+  save();renderAll();
+  ['t-text','t-due','t-person','t-email'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('t-text').focus();
+  if(due&&dayStatus(due)==='overdue')showToast('⚠ Das gewählte Datum liegt in der Vergangenheit.');
+};
+document.getElementById('t-text').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('add-btn').click();});
+
+document.getElementById('list').addEventListener('click',e=>{
+  const tog=e.target.closest('[data-toggle]');
+  const del=e.target.closest('[data-del]');
+  const mail=e.target.closest('[data-mail]');
+  if(tog){const t=tasks.find(x=>x.id===+tog.dataset.toggle);if(t){t.done=!t.done;save();renderAll();}}
+  if(del){tasks=tasks.filter(x=>x.id!==+del.dataset.del);save();renderAll();}
+  if(mail){const t=tasks.find(x=>x.id===+mail.dataset.mail);if(t)sendEmail([t],t);}
+});
+document.getElementById('list').addEventListener('keydown',e=>{if(e.key===' '||e.key==='Enter'){const tog=e.target.closest('[data-toggle]');if(tog)tog.click();}});
+document.getElementById('send-all-btn').onclick=()=>{const o=tasks.filter(t=>!t.done&&dayStatus(t.due)==='overdue');if(o.length)sendEmail(o);};
+
+document.querySelectorAll('.fb').forEach(b=>{b.onclick=()=>{filter=b.dataset.f;document.querySelectorAll('.fb').forEach(x=>x.classList.remove('active'));b.classList.add('active');renderTasks();};});
+document.querySelectorAll('.tab').forEach(b=>{
+  b.onclick=()=>{
+    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');
+    document.getElementById('view-dashboard').style.display=b.dataset.tab==='dashboard'?'':'none';
+    document.getElementById('view-tasks').style.display=b.dataset.tab==='tasks'?'':'none';
+    if(b.dataset.tab==='dashboard')renderDashboard();
+  };
+});
+
+renderAll();
+</script>
